@@ -9,9 +9,8 @@
 
 // https://editor.p5js.org/codingtrain/sketches/xgQNXkxx1
 
-const mr = 0.01;
 
-function Vehicle(x, y, dna) {
+function Vehicle(x, y, dna, mr = 0.01) {
   this.acceleration = createVector(0, 0);
   this.velocity = createVector(0, -2);
   this.position = createVector(x, y);
@@ -121,28 +120,6 @@ function Vehicle(x, y, dna) {
     this.acceleration.mult(0);
   };
 
-  this.altruism = function (others) {
-    /*
-      alternative idea. if you are sharing food, you cannot eat it.
-      in a more complicated scenario eating food counts some of the timeout
-      (according to this.dna[5]) and you can keep the other half in reserve
-      eating only if necessary but sharing if excess. You can also be hurt
-      if you come upon someone (this.dna[4]) and cannot share any food if you
-      hit the chance
-    */
-    for (let vehicle of others) {
-      if (vehicle !== this) {
-        let d = this.position.dist(vehicle.position);
-        if (d < this.dna[4]) {
-          if (random(1) < (this.dna[5] + this.dna[7])) {
-            vehicle.health += 0.1; // half the food score
-            this.health -= 0.1; // simulates sharing a piece of food by 1/2
-          }
-        }
-      }
-    }
-  }
-
   this.applyForce = function (force) {
     // We could add mass here if we want A = F / M
     this.acceleration.add(force);
@@ -151,7 +128,7 @@ function Vehicle(x, y, dna) {
   this.behaviors = function (good, bad, potentialMates) {
     var steerG = this.eat(good, 0.2, this.dna[2]);
     var steerB = this.eat(bad, -1, this.dna[3]);
-    let mateSteer = this.seekNearestVehicle(this.dna[4], 1 / (vehicles.length * reproduceSlider.value()));
+    let mateSteer = this.seekNearestVehicle(this.dna[4], this.dna[7]);
     let helpSteer = this.seekNearestVehicle(this.dna[4], this.dna[5]);
 
     steerG.mult(this.dna[0]);
@@ -192,6 +169,34 @@ function Vehicle(x, y, dna) {
     }
   }
 
+  // seeking (above) is dependent on DNA, but the actual chance of reproducing
+  // must still be checked as must altruism because two vehicles can at any time
+  // encounter each other without having sought each other.
+  // seeking depends on dna and the actual altruism and reproduction chance
+  // depends as well separately.
+
+  this.altruism = function (others) {
+    /*
+      alternative idea. if you are sharing food, you cannot eat it.
+      in a more complicated scenario eating food counts some of the timeout
+      (according to this.dna[5]) and you can keep the other half in reserve
+      eating only if necessary but sharing if excess. You can also be hurt
+      if you come upon someone (this.dna[4]) and cannot share any food if you
+      hit the chance
+    */
+    for (let vehicle of others) {
+      if (vehicle !== this) {
+        let d = this.position.dist(vehicle.position);
+        if (d < this.dna[4]) {
+          if (random(1) < this.dna[5]) {
+            vehicle.health += 0.1; // half the food score
+            this.health -= 0.1; // simulates sharing a piece of food by 1/2
+          }
+        }
+      }
+    }
+  }
+
   this.reproduce = function (population) {
     let nearest = null;
     let record = Infinity;
@@ -205,25 +210,29 @@ function Vehicle(x, y, dna) {
       }
     }
 
-    // check for perceptionRadius, then old enough to reproduce (contained in DNA) then have not recently reproduced (variable 1-3 seconds but not in DNA)
-    if (record < this.dna[4] && frameCount - this.firstFrame > this.dna[9] && (frameCount - this.lastReproduced) > (60 * random(0, 2))) {
-      let other = nearest.dna;
-      let mine = this.dna;
+    // check for perceptionRadius,
+    // then old enough to reproduce (contained in DNA)
+    // then have not recently reproduced (variable 1-3 seconds but not in DNA)
+    // then chance to reproduce
+    if (
+      record < this.dna[4] &&
+      frameCount - this.firstFrame > this.dna[9] &&
+      (frameCount - this.lastReproduced) > (60 * random(0, 2)) &&
+      random(1) < (1 / (vehicles.length * reproduceSlider.value()))
+    ) {
       let dna = [];
-      if (random(1) < 0.5) {
-        for (let i = 0; i < floor(this.dna.length / 2); i++) {
-          dna[i] = other[i];
-        }
-        for (let i = floor(this.dna.length / 2); i < this.dna.length; i++) {
-          dna[i] = mine[i];
-        }
-      } else {
-        for (let i = 0; i < floor(this.dna.length / 2); i++) {
-          dna[i] = mine[i];
-        }
-        for (let i = floor(this.dna.length / 2); i < this.dna.length; i++) {
-          dna[i] = other[i];
-        }
+
+      let first = random(1) < 0.5 ? this.dna : nearest.dna;
+      let other = first === this.dna ? nearest.dna : this.dna;
+
+      let stop = floor(random(first.length));
+
+      for (let i = 0; i < stop; i++) {
+        dna[i] = first[i];
+      }
+
+      for (let i = stop; i < this.dna.length; i++) {
+        dna[i] = other[i];
       }
 
       this.lastReproduced = frameCount;
