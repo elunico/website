@@ -42,6 +42,17 @@ contributions:
       url: "https://github.com/Clipi-12"
     url: "https://editor.p5js.org/Clipi/full/HEWqeH_XD"
     source: "https://editor.p5js.org/Clipi/sketches/HEWqeH_XD"
+  - title: "Animated snowflake"
+    author:
+      name: "Marcus Whiteley"
+      url: "https://www.wheapps.com/"
+    url: "https://editor.p5js.org/MarcusW/full/fTJ0AyvYQ"
+    source: "https://editor.p5js.org/MarcusW/sketches/fTJ0AyvYQ"
+  - title: "Snowflake Creator with many colors"
+    author:
+      name: "David Snyder"
+      url: "https://github.com/GypsyDangerous"
+    url: "https://editor.p5js.org/D_Snyder/full/3lvx56LMc"
+    source: "https://editor.p5js.org/D_Snyder/sketches/3lvx56LMc"
 ---
-
 Happy holidays! #SupportP5! This video shows an attempt to make a snowflake from a "kaleidoscope painting" effect.
