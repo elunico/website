@@ -5,13 +5,14 @@
 // https://editor.p5js.org/codingtrain/sketches/ry4XZ8OkN
 
 class Boid {
-  constructor() {
+  constructor(p) {
     this.position = createVector(random(width), random(height));
     this.velocity = p5.Vector.random2D();
     this.velocity.setMag(random(2, 4));
     this.acceleration = createVector();
     this.maxForce = 1;
     this.maxSpeed = 4;
+    this.perceptionRadius = p;
   }
 
   edges() {
@@ -28,7 +29,6 @@ class Boid {
   }
 
   align(boids) {
-    let perceptionRadius = 50;
     let steering = createVector();
     let total = 0;
     for (let other of boids) {
@@ -38,7 +38,7 @@ class Boid {
         other.position.x,
         other.position.y
       );
-      if (other != this && d < perceptionRadius) {
+      if (other != this && d < this.perceptionRadius) {
         steering.add(other.velocity);
         total++;
       }
@@ -53,7 +53,6 @@ class Boid {
   }
 
   separation(boids) {
-    let perceptionRadius = 50;
     let steering = createVector();
     let total = 0;
     for (let other of boids) {
@@ -63,7 +62,7 @@ class Boid {
         other.position.x,
         other.position.y
       );
-      if (other != this && d < perceptionRadius) {
+      if (other != this && d < this.perceptionRadius) {
         let diff = p5.Vector.sub(this.position, other.position);
         diff.div(d * d);
         steering.add(diff);
@@ -80,7 +79,6 @@ class Boid {
   }
 
   cohesion(boids) {
-    let perceptionRadius = 100;
     let steering = createVector();
     let total = 0;
     for (let other of boids) {
@@ -90,7 +88,7 @@ class Boid {
         other.position.x,
         other.position.y
       );
-      if (other != this && d < perceptionRadius) {
+      if (other != this && d < this.perceptionRadius) {
         steering.add(other.position);
         total++;
       }
