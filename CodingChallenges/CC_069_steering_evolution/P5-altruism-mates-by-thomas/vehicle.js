@@ -151,7 +151,7 @@ function Vehicle(x, y, dna) {
   this.behaviors = function (good, bad, potentialMates) {
     var steerG = this.eat(good, 0.2, this.dna[2]);
     var steerB = this.eat(bad, -1, this.dna[3]);
-    let mateSteer = this.seekNearestVehicle(this.dna[4], reproduceSlider.value());
+    let mateSteer = this.seekNearestVehicle(this.dna[4], 1 / vehicles.length);
     let helpSteer = this.seekNearestVehicle(this.dna[4], this.dna[5]);
 
     steerG.mult(this.dna[0]);
@@ -205,8 +205,8 @@ function Vehicle(x, y, dna) {
       }
     }
 
-    // check for perceptionRadius, then chance to reproduce, then old enough to reproduce (contained in DNA) then have not recently reproduced (variable 1-3 seconds but not in DNA)
-    if (record < this.dna[4] && random(1) < reproduceSlider.value() && frameCount - this.firstFrame > this.dna[9] && (frameCount - this.lastReproduced) > (60 * random(0, 2))) {
+    // check for perceptionRadius, then old enough to reproduce (contained in DNA) then have not recently reproduced (variable 1-3 seconds but not in DNA)
+    if (record < this.dna[4] && frameCount - this.firstFrame > this.dna[9] && (frameCount - this.lastReproduced) > (60 * random(0, 2))) {
       let other = nearest.dna;
       let mine = this.dna;
       let dna = [];
