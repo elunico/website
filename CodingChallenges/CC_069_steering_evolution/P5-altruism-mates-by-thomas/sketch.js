@@ -29,6 +29,7 @@ let reproduceDiv;
 
 let foodSpawnSlider;
 let poisonSpawnSlider;
+let reproduceSlider;
 
 function setup() {
   createCanvas(640, 360);
@@ -82,6 +83,9 @@ function setup() {
   poisonDiv = createDiv('');
   poisonSpawnSlider = createSlider(0, 1, 0.05, 0.005);
 
+  reproduceDiv = createDiv('');
+  reproduceSlider = createSlider(0, 25, 1, 0.1);
+
 }
 
 function mouseDragged() {
@@ -94,7 +98,7 @@ function draw() {
 
   foodDiv.html(`Chance of food spawn: ${foodSpawnSlider.value()}`)
   poisonDiv.html(`Chance of poison spawn: ${poisonSpawnSlider.value()}`)
-
+  reproduceDiv.html(`When near another vehicle, chance of reproduction is 1 / (population size * ${reproduceSlider.value()})`)
 
   if (random(1) < foodSpawnSlider.value()) {
     var x = random(width);
@@ -108,8 +112,8 @@ function draw() {
     poison.push(createVector(x, y));
   }
 
-  if (random(1) < poisonSpawnSlider.value() / 2) {
-    poison.splice(0, random(1, 3));
+  if (frameCount % 120 == 0) {
+    poison.splice(0, 1);
   }
 
   for (var i = 0; i < food.length; i++) {

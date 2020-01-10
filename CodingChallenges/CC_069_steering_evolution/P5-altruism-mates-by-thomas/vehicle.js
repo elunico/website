@@ -151,7 +151,7 @@ function Vehicle(x, y, dna) {
   this.behaviors = function (good, bad, potentialMates) {
     var steerG = this.eat(good, 0.2, this.dna[2]);
     var steerB = this.eat(bad, -1, this.dna[3]);
-    let mateSteer = this.seekNearestVehicle(this.dna[4], 1 / vehicles.length);
+    let mateSteer = this.seekNearestVehicle(this.dna[4], 1 / (vehicles.length * reproduceSlider.value()));
     let helpSteer = this.seekNearestVehicle(this.dna[4], this.dna[5]);
 
     steerG.mult(this.dna[0]);
