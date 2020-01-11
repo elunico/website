@@ -1,13 +1,3 @@
-// Daniel Shiffman
-// The Coding Train
-// Coding Challenge 69: Steering Evolution
-// Part 1: https://youtu.be/flxOkx0yLrY
-// Part 2: https://youtu.be/XaOVH8ZSRNA
-// Part 3: https://youtu.be/vZUWTlK7D2Q
-// Part 4: https://youtu.be/ykOcaInciBI
-// Part 5: https://youtu.be/VnFF5V5DS8s
-
-// https://editor.p5js.org/codingtrain/sketches/xgQNXkxx1
 
 
 function Vehicle(x, y, dna, mr = 0.01) {

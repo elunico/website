@@ -1,13 +1,4 @@
-// Daniel Shiffman
-// The Coding Train
-// Coding Challenge 69: Steering Evolution
-// Part 1: https://youtu.be/flxOkx0yLrY
-// Part 2: https://youtu.be/XaOVH8ZSRNA
-// Part 3: https://youtu.be/vZUWTlK7D2Q
-// Part 4: https://youtu.be/ykOcaInciBI
-// Part 5: https://youtu.be/VnFF5V5DS8s
 
-// https://editor.p5js.org/codingtrain/sketches/xgQNXkxx1
 
 const population = 200;
 
@@ -106,10 +97,21 @@ function setup() {
     saveConfiguration();
   });
 
-  createDiv('Load Configuration');
+  createP('');
+  createDiv('Load Configuration from File');
 
   createFileInput(loadConfigurationFromFile);
   saveBestVehicleButton.attribute('disabled', true);
+
+  createP('');
+  let loadOptimalButton = createButton('Load an Example Optimal Configuration');
+  loadOptimalButton.mousePressed(loadOptimal);
+}
+
+function loadOptimal() {
+  fetch('./optimal-population-configurations/configuration1.json').then(r => r.json()).then(json => {
+    loadConfigurationFromJSON(json);
+  });
 }
 
 function saveConfiguration() {
@@ -129,10 +131,14 @@ function p5FileDataToJson(data) {
 
 function loadConfigurationFromFile(file) {
   let savedState = p5FileDataToJson(file.data);
-  foodSpawnSlider.value(savedState.foodSpawnChance);
-  poisonSpawnSlider.value(savedState.poisonSpawnChance);
-  reproduceSlider.value(savedState.reproduceChance);
-  let dnas = savedState.dnas;
+  loadConfigurationFromJSON(savedState);
+}
+
+function loadConfigurationFromJSON(json) {
+  foodSpawnSlider.value(json.foodSpawnChance);
+  poisonSpawnSlider.value(json.poisonSpawnChance);
+  reproduceSlider.value(json.reproduceChance);
+  let dnas = json.dnas;
   vehicles = [];
   for (let i = 0; i < 100; i++) {
     vehicles.push(new Vehicle(random(width), random(height), dnas[i], 0.0));
